@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { Marker } from 'google-maps-react';
+import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 
-import GoogleApiWrapper from './components/Map'
+import GoogleMap from './components/Map'
 import Nav from './components/Nav'
 import Sidebar from './components/Sidebar'
 
@@ -14,8 +14,10 @@ class App extends Component {
     super();
     this.state = {
       places: null,
+      markers: null,
       sidebarOpen: false,
-      lastClickedPlace: null
+      lastClickedPlace: null,
+      lastClickedMarker: null,
     }
     this.toggleSideBar = this.toggleSideBar.bind(this);
     this.loadPlaces = this.loadPlaces.bind(this);
@@ -41,8 +43,17 @@ class App extends Component {
     self.loadPlaces()
     .then(function(data){
       let places = {};
-      for(let venue of data.response.venues) { places[venue.id] = venue; }
-      self.setState({ places: places, sidebarOpen: true }, () => { console.log(self); })
+      let markers = {};
+      for(let venue of data.response.venues) {
+        places[venue.id] = venue;
+        // markers[venue.id] = new google.maps.Marker({
+				//   position: new google.maps.LatLng(venue.location.lat, venue.location.lat),
+				//   title: venue.name,
+				//   id: venue.id,
+				//   animation: google.maps.Animation.DROP
+			  // });
+      }
+      self.setState({ places: places, markers: markers, sidebarOpen: true }, () => { console.log(self); })
     })
   }
 
@@ -63,7 +74,7 @@ class App extends Component {
           toggleSideBar={this.toggleSideBar}
           places={this.state.places} />
 
-        <GoogleApiWrapper
+        <GoogleMap
           places={this.state.places}
           lastClickedPlace={this.state.lastClickedPlace} />
       </div>

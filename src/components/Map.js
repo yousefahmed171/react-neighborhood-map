@@ -10,7 +10,7 @@ import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 
 */
 
-export class MapContainer extends Component {
+export class GoogleMapClass extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -99,6 +99,8 @@ export class MapContainer extends Component {
   }
 }
 
-export default GoogleApiWrapper({
+let GoogleMap = GoogleApiWrapper({
   apiKey: ('AIzaSyB6N63ZIGH4b8Hgm9KhodA87Guuiem3C8Y')
-})(MapContainer)
+})(GoogleMapClass)
+
+export default GoogleMap
