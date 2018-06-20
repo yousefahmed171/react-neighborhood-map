@@ -26,6 +26,14 @@ body {
   font-size: large;
 }
 
+.transition {
+  -webkit-transition: transition 0.3s;
+  -moz-transition: transition 0.3s;
+  -o-transition: transition 0.3s;
+  -ms-transition: transition 0.3s;
+  transition: 0.3s;
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -38,8 +46,20 @@ body {
   z-index: 100;
   box-shadow: 0px 1px 1px grey;
   background: black;
-  border-bottom: 1px solid lightgrey;
 }
+
+#sidebar {
+  position: absolute;
+  z-index: 100;
+  box-shadow: 0px 1px 1px grey;
+  background: #f2f2f2;
+  width: 325px;
+  max-width: 100%;
+  height: calc(100vh - 60px);
+  overflow-y: scroll;
+  padding: 10px;
+}
+
 
 #head-text {
   margin: 0px;
@@ -50,4 +70,42 @@ body {
   padding: 0px 20px;
   word-spacing: 1.5px;
   letter-spacing: 1.5px;
+  display: inline-block;
+}
+
+#menu-text {
+  float: right;
+  margin: 0px;
+  color: white;
+  height: 60px;
+  line-height: 60px;
+  vertical-align: middle;
+  padding: 0px 20px;
+  word-spacing: 1.5px;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+}
+#menu-text:hover {
+  background: #f2f2f2;
+  color: black;
+}
+
+#places-list {
+  margin: 0px;
+  padding: 5px;
+  width: 100%;
+}
+
+#places-list li {
+  list-style: none;
+  padding: 10px;
+  margin: 15px 0px;
+  border: 1px solid grey;
+  box-shadow: 0px 1px 1px grey;
+  background: white;
+  cursor: pointer;
+}
+
+#places-list li:hover {
+  background: lightgrey;
 }

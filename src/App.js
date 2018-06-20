@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { Marker } from 'google-maps-react';
 
 import GoogleApiWrapper from './components/Map'
 import Nav from './components/Nav'
@@ -12,20 +13,59 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      markers: {}
+      places: null,
+      sidebarOpen: false,
+      lastClickedPlace: null
     }
+    this.toggleSideBar = this.toggleSideBar.bind(this);
+    this.loadPlaces = this.loadPlaces.bind(this);
+    this.liPlaceClick = this.liPlaceClick.bind(this);
+  }
+
+  toggleSideBar(bool) {
+    this.setState({ sidebarOpen: bool || !this.state.sidebarOpen });
+  }
+
+  loadPlaces() {
+    let city = 'Silver Spring, MD';
+    let query = 'Shopping';
+    var apiURL = 'https://api.foursquare.com/v2/venues/search?client_id=N1IAMKZUIK1AUHKRFGFBKPQ2YKDSBAKS4NTER5SYZN5CROR1&client_secret=4MKLXVLU2FGZQVRMAEDC15P0TFJGSCY3ZUYUZ0KHQQQLQ5R3&v=20130815%20&limit=33&near=' + city + '&query=' + query + '';
+
+    return fetch(apiURL)
+    .then(function(resp){ return resp.json() })
+    .then(function(json){ return Promise.resolve(json); })
   }
 
   componentDidMount() {
-    console.log(this);
+    let self = this;
+    self.loadPlaces()
+    .then(function(data){
+      let places = {};
+      for(let venue of data.response.venues) { places[venue.id] = venue; }
+      self.setState({ places: places, sidebarOpen: true }, () => { console.log(self); })
+    })
+  }
+
+  liPlaceClick(place) {
+    this.setState({ lastClickedPlace: place });
   }
 
   render() {
     return (
       <div id="app-container">
-        <Nav />
+        <Nav
+          sidebarOpen={this.state.sidebarOpen}
+          toggleSideBar={this.toggleSideBar} />
 
-        <GoogleApiWrapper />
+        <Sidebar
+          liPlaceClick={this.liPlaceClick}
+          sidebarOpen={this.state.sidebarOpen}
+          toggleSideBar={this.toggleSideBar}
+          places={this.state.places} />
+
+        <GoogleApiWrapper
+          places={this.state.places}
+          lastClickedPlace={this.state.lastClickedPlace} />
       </div>
     );
   }
