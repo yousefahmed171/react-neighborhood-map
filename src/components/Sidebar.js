@@ -7,7 +7,7 @@ class Sidebar extends Component {
   }
 
   componentDidMount() {
-    console.log(this);
+    // console.log(this);
   }
 
   // onClick={() => { self.props.liPlaceClick(place) }}
@@ -22,7 +22,7 @@ class Sidebar extends Component {
             this.props.places && Object.keys(self.props.places).map(function(key){
               let place = self.props.places[key];
               return (
-                <li className="transition" title={ place.name } key={ place.id }>
+                <li className="transition" title={ place.name } key={ place.id } onClick={() => { self.props.liPlaceClick(place) }}>
                   <h4><strong>{ place.name }</strong></h4>
                   <p>
                     { place.location.address }<br/>

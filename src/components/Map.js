@@ -17,12 +17,31 @@ export class GoogleMapClass extends Component {
       showingInfoWindow: false,
       activeMarker: {},
       selectedPlace: {},
-      places: props.places
+      places: props.places,
+      focus: {},
+      venue: {}
     }
   }
 
-  componentDidMount() {
+  componentWillMount() {
 
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // console.log('nextProps: ', nextProps);
+    if(nextProps.lastClickedPlace && nextProps.lastClickedPlace.id) {
+      console.log('changing focus', nextProps.lastClickedPlace);
+      this.setState({
+        focus: {
+          lat: nextProps.lastClickedPlace.location.lat,
+          lng: nextProps.lastClickedPlace.location.lng
+        }, 
+        showingInfoWindow: true,
+        focusPlace: nextProps.lastClickedPlace
+      }, () => {
+        console.log(this);
+      });
+    }
   }
 
   onMarkerClick(props, marker, e, venue) {
@@ -30,12 +49,16 @@ export class GoogleMapClass extends Component {
     this.setState({
       selectedPlace: props,
       activeMarker: marker,
+      focus: {
+        lat: marker.position.lat(),
+        lng: marker.position.lng()
+      },
       showingInfoWindow: true,
-      veune: venue
+      focusPlace: this.props.places[marker.id]
     });
   }
 
-  onMapClicked = (props) => {
+  onMapClicked(props) {
     if (this.state.showingInfoWindow) {
       this.setState({
         showingInfoWindow: false,
@@ -45,7 +68,7 @@ export class GoogleMapClass extends Component {
     }
   }
 
-  windowHasClosed = (props) => {
+  windowHasClosed(props) {
     this.setState({
       showingInfoWindow: false,
       activeMarker: null,
@@ -56,39 +79,36 @@ export class GoogleMapClass extends Component {
 
 
   render() {
-    let self = this;
-    let venue = {};
-    if(this.state.activeMarker && this.state.activeMarker.id) {
-      let id = this.state.activeMarker.id;
-      venue = this.props.places[id];
-    }
+    let { focusPlace } = this.state;
+    // console.log(this);
+    // console.log(focusPlace);
 
     return (
       <div style={{width: '100%', height: 'calc(100vh - 60px)', position: 'relative'}}>
       <Map id="map" google={this.props.google} zoom={9} initialCenter={{ lat: 39.07507511940357, lng: -77.1376322468508 }}>
 
         {
-          self.props.places && Object.keys(self.props.places).map(function(key){
-            let place = self.props.places[key];
+          this.props.places && Object.keys(this.props.places).map((key) => {
+            let place = this.props.places[key];
             return (
-              <Marker key={place.id} id={place.id} onClick={(p, m, e) => { self.onMarkerClick(p, m, e, place) }} name={ place.name }
+              <Marker key={place.id} id={place.id} onClick={(p, m, e) => { this.onMarkerClick(p, m, e, place) }} name={ place.name }
                 position={{ lat: place.location.lat, lng: place.location.lng }}/>
             )
           })
         }
 
-        <InfoWindow marker={this.state.activeMarker} visible={this.state.showingInfoWindow} onClose={this.windowHasClosed}>
+        <InfoWindow position={ this.state.focus } visible={this.state.showingInfoWindow} onClose={() => { this.windowHasClosed }}>
         <div>
-          { venue && venue.name &&
+          { focusPlace && focusPlace.id &&
             <div>
-            <h4><strong>{ venue.name }</strong></h4>
+            <h4><strong>{ focusPlace.name }</strong></h4>
             <p>
-              { venue.location.address }<br/>
-              { venue.location.crossStreet && venue.location.crossStreet }<br/>
-              { venue.location.city }, { venue.location.state } { venue.location.postalCode && venue.location.postalCode }<br/>
-              { venue.location.country }<br/>
+              { focusPlace.location.address }<br/>
+              { focusPlace.location.crossStreet && focusPlace.location.crossStreet }<br/>
+              { focusPlace.location.city }, { focusPlace.location.state } { focusPlace.location.postalCode && focusPlace.location.postalCode }<br/>
+              { focusPlace.location.country }<br/>
             </p>
-            <p>{ venue.hereNow.count } | { venue.hereNow.summary }</p>
+            <p>{ focusPlace.hereNow.count } | { focusPlace.hereNow.summary }</p>
             </div>
           }
         </div>

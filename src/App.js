@@ -46,14 +46,10 @@ class App extends Component {
       let markers = {};
       for(let venue of data.response.venues) {
         places[venue.id] = venue;
-        // markers[venue.id] = new google.maps.Marker({
-				//   position: new google.maps.LatLng(venue.location.lat, venue.location.lat),
-				//   title: venue.name,
-				//   id: venue.id,
-				//   animation: google.maps.Animation.DROP
-			  // });
       }
-      self.setState({ places: places, markers: markers, sidebarOpen: true }, () => { console.log(self); })
+      self.setState({ places: places, markers: markers, sidebarOpen: true }, () => {
+        // console.log(self);
+      })
     })
   }
 
